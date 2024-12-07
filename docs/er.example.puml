@@ -1,0 +1,71 @@
+@startuml Entity Relationship Model
+skinparam linetype ortho
+
+entity clients {
+    *id: INT <<PK>>
+    --
+    *name: VARCHAR(75)
+    dni: VARCHAR(8)
+    ruc: VARCHAR(11)
+    *type: CHAR(1)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+entity orders {
+    *id: INT <<PK>>
+    --
+    *date: DATETIME
+    *client_id: INT <<FK>>
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+entity order_items {
+    *order_id: INT <<PK, FK>>
+    *product_id: INT <<PK, FK>>
+    --
+    *quantity: INT
+    *price: DECIMAL(10,2)
+    *discount: DECIMAL(10,2)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+entity products {
+    *id: INT <<PK>>
+    --
+    *name: VARCHAR(75)
+    *price: DECIMAL(10,2)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+entity warehouses {
+    *id: INT <<PK>>
+    --
+    *name: VARCHAR(75)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+entity inventories {
+    *product_id: INT <<PK, FK>>
+    *warehouse_id: INT <<PK, FK>>
+    --
+    *stock: INT
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+clients ||--o{ orders
+orders ||-right-|{ order_items
+products ||--o{ order_items
+products ||--o{ inventories
+warehouses ||--o{ inventories

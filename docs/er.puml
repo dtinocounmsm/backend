@@ -1,0 +1,46 @@
+@startuml
+
+entity "users" {
+    +id: SERIAL <<PK>>
+		--
+    +names: VARCHAR(255)
+    +firstSurname: VARCHAR(255)
+    +secondSurname: VARCHAR(255)
+    +email: VARCHAR(255)
+    +address: VARCHAR(255)
+    +birthDate: TIMESTAMP
+    +gender: CHAR(1)
+    +mobile: VARCHAR(255)
+    +active: BOOLEAN
+    +createdAt: TIMESTAMPTZ
+    +updatedAt: TIMESTAMPTZ
+}
+
+entity "quotations" {
+    +id: SERIAL <<PK>>
+		--
+    +customerId: INTEGER
+    +userId: INTEGER
+    +date: TIMESTAMP
+    +totalPrice: DECIMAL
+    +expirationDate: TIMESTAMP
+}
+
+entity "customers" {
+    +id: SERIAL <<PK>>
+		--
+    +names: VARCHAR(255)
+    +firstSurname: VARCHAR(255)
+    +secondSurname: VARCHAR(255)
+    +documentType: CHAR(1)
+    +documentNumber: VARCHAR(255)
+    +email: VARCHAR(255)
+    +mobile: VARCHAR(255)
+    +phone: VARCHAR(255)
+    +address: VARCHAR(255)
+}
+
+users ||--o{ quotations
+customers ||--o{ quotations
+
+@enduml
