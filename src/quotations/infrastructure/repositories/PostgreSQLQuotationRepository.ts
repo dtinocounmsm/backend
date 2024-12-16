@@ -1,11 +1,11 @@
 import { DRIZZLE } from '@db/drizzle.module';
-import { quotations } from '@db/schema/schema';
+import { quotations, quotationDetail } from '@db/schema/schema';
 import { DrizzleDB } from '@db/types/drizzle';
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomLoggerService } from '@shared/application/services/custom-logger.service';
-// import { eq } from 'drizzle-orm';
 import { QuotationRepository } from '@quotations/domain/repositories/quotation.repository';
 import { QuotationRegistration } from '@quotations/domain/entities/quotation.entity';
+import { QuotationDetail } from '@quotations/domain/entities/quotation-detail.entity';
 
 @Injectable()
 export class PostgreSQLQuotationRepository implements QuotationRepository {
@@ -16,18 +16,46 @@ export class PostgreSQLQuotationRepository implements QuotationRepository {
     this.logger.setContext(PostgreSQLQuotationRepository.name);
   }
 
-  async create(quotation: QuotationRegistration): Promise<void> {
-    let createdQuotation: unknown;
+  async create(
+    quotation: QuotationRegistration,
+    items: QuotationDetail[],
+  ): Promise<void> {
+    let createdQuotation: any;
+    const createdItems: any[] = [];
     try {
-      createdQuotation = await this.db
-        .insert(quotations)
-        .values({ ...quotation.toPrimitives() })
-        .execute();
+      // console.log({ quotation });
+      // console.log({ items });
+      await this.db.transaction(async (trx) => {
+        const [createdQuotation] = await trx
+          .insert(quotations)
+          .values({ ...quotation.toPrimitives() })
+          .returning();
+        console.log({ createdQuotation });
+        console.log(createdQuotation.id);
+        if (!createdQuotation.id) {
+          trx.rollback();
+        }
+        // iterate items
+        for (const item of items) {
+          const createItem = await trx
+            .insert(quotationDetail)
+            .values({
+              ...item.toPrimitives(),
+              quotationId: createdQuotation.id,
+            })
+            .execute();
+          if (!createItem) {
+            trx.rollback();
+          }
+          createdItems.push(createItem);
+        }
+      });
+
       this.logger.log(
-        `Quotatation created successfully. ${JSON.stringify(createdQuotation)}`,
+        `Quotation created successfully. ${JSON.stringify(createdQuotation)} ${JSON.stringify(createdItems)}`,
       );
     } catch (error) {
-      this.logger.error(`Failed to create quotation`);
+      this.logger.error(`Failed to create quotation`, error);
       throw new Error('Failed to create quotation');
     }
   }

@@ -6,6 +6,7 @@ import { AsyncContextService } from '@shared/application/services/async-context-
 export class TraceIdMiddleware implements NestMiddleware {
   constructor(private readonly asyncContextService: AsyncContextService) {}
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   use(req: Request, res: Response, next: Function) {
     const existingStore = this.asyncContextService.getStore();
     const store = existingStore || new Map<string, any>();

@@ -1,4 +1,5 @@
 import { pgTable, serial, text, char, boolean } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const customers = pgTable('customers', {
   id: serial('id').primaryKey(),
@@ -14,5 +15,7 @@ export const customers = pgTable('customers', {
   mobile: text('mobile').notNull(),
   birthdate: text('birthdate'),
   gender: char('gender').notNull(),
-  active: boolean('active').notNull(),
+  active: boolean('active')
+    .default(sql`TRUE`)
+    .notNull(),
 });

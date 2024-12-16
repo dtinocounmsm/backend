@@ -13,6 +13,7 @@ import { SharedModule } from '@shared/infrastructure/nest/shared.module';
 import { TraceIdResponseInterceptor } from '@shared/infrastructure/interceptors/trace-id-response.interceptor';
 import { ProductsModule } from '@products/infrastructure/nestjs/products.module';
 import { QuotationsModule } from '@quotations/infrastructure/nestjs/quotations.module';
+import { CustomersModule } from '@customers/infrastructure/nestjs/customers.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { QuotationsModule } from '@quotations/infrastructure/nestjs/quotations.m
     ConfigModule.forRoot({ isGlobal: true }),
     ProductsModule,
     QuotationsModule,
+    CustomersModule,
   ],
   controllers: [HealthcheckController],
   providers: [

@@ -27,7 +27,7 @@ export class PostgreSQLProductRepository implements ProductRepository {
         `Product created successfully. ${JSON.stringify(createdProduct)}`,
       );
     } catch (error) {
-      this.logger.error(`Failed to create product`);
+      this.logger.error(`Failed to create product`, error);
       throw new Error('Failed to create product');
     }
   }

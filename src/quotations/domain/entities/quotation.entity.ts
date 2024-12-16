@@ -1,18 +1,18 @@
 export type QuotationRegistrationPrimitives = {
   customerId: number;
   userId: number;
-  string: string;
+  // date: string;
   total: string;
-  expirationstring: string;
+  expirationDate: Date;
 };
 
 export class QuotationRegistration {
   constructor(
     public readonly customerId: number,
     public readonly userId: number,
-    public readonly string: string,
+    // public readonly date: string,
     public readonly total: string,
-    public readonly expirationstring: string,
+    public readonly expirationDate: Date,
   ) {}
 
   static fromPrimitives(
@@ -21,9 +21,8 @@ export class QuotationRegistration {
     return new QuotationRegistration(
       primitives.customerId,
       primitives.userId,
-      primitives.string,
       primitives.total,
-      primitives.expirationstring,
+      new Date(),
     );
   }
 
@@ -31,9 +30,8 @@ export class QuotationRegistration {
     return {
       customerId: this.customerId,
       userId: this.userId,
-      string: this.string,
       total: this.total,
-      expirationstring: this.expirationstring,
+      expirationDate: this.expirationDate,
     };
   }
 }

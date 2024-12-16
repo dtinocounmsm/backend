@@ -39,6 +39,11 @@
       "@quotations/infrastructure/*": ["src/quotations/infrastructure/*"],
       "@quotations/interfaces/*": ["src/quotations/interfaces/*"],
 
+      "@customers/application/*": ["src/customers/application/*"],
+      "@customers/domain/*": ["src/customers/domain/*"],
+      "@customers/infrastructure/*": ["src/customers/infrastructure/*"],
+      "@customers/interfaces/*": ["src/customers/interfaces/*"],
+
       "@shared/application/*": ["src/shared/application/*"],
       "@shared/domain/*": ["src/shared/domain/*"],
       "@shared/infrastructure/*": ["src/shared/infrastructure/*"],
