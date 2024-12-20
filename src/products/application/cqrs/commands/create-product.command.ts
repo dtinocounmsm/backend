@@ -1,8 +1,6 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostgreSQLUserRepository } from '@user/infrastructure/repositories/PostgreSQLUserRepository';
 import { CustomLoggerService } from '@shared/application/services/custom-logger.service';
-import { UserRegistration } from '@user/domain/entities/UserRegistration';
 import { ProductRepository } from '@products/domain/repositories/product.repository';
 import { PostgreSQLProductRepository } from '@products/infrastructure/repositories/PostgreSQLProductRepository';
 import { ProductRegistration } from '@products/domain/entities/product-registration';
@@ -26,7 +24,7 @@ export class CreateProductCommandHandler
   async execute(command: CreateProductCommand): Promise<void> {
     this.logger.log(`execute(${JSON.stringify(command)})`);
     const newProduct = this.createProduct(command.product);
-    this.productRepository.create(newProduct);
+    await this.productRepository.create(newProduct);
   }
 
   private createProduct(user: any): ProductRegistration {
