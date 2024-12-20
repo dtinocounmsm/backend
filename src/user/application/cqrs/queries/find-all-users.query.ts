@@ -3,6 +3,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserRepository } from '@user/domain/repositories/user.repository';
 import { PostgreSQLUserRepository } from '@user/infrastructure/repositories/PostgreSQLUserRepository';
 import { CustomLoggerService } from '@shared/application/services/custom-logger.service';
+
 export class FindAllUsersQuery {}
 
 @QueryHandler(FindAllUsersQuery)

@@ -23,9 +23,6 @@ export class FindUserByIdQueryHandler
   async execute(query: FindUserByIdQuery): Promise<any> {
     const { id } = query;
     this.customLoggerService.log(`execute(${JSON.stringify({ id })})`);
-    const user = await this.userRepository.find(id);
-    return {
-      user,
-    };
+    return this.userRepository.find(id);
   }
 }

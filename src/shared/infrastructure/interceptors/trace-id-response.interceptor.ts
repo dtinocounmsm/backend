@@ -18,21 +18,10 @@ export class TraceIdResponseInterceptor implements NestInterceptor {
     const traceId = this.asyncContextService.get('traceId') || 'no-trace';
 
     return next.handle().pipe(
-      map((data) => {
-        // Verifica si la respuesta ya es un objeto
-        if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-          return {
-            traceId,
-            ...data,
-          };
-        } else {
-          // Si la respuesta es un array u otro tipo, lo coloca en 'results'
-          return {
-            traceId,
-            results: data,
-          };
-        }
-      }),
+      map((data) => ({
+        traceId,
+        data,
+      })),
     );
   }
 }
