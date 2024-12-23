@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsInt, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class FindUserByIdRequestDto {
   @ApiProperty({
     description: 'id of the user',
-    example: '123',
+    example: 1,
     type: Number,
   })
   @IsNotEmpty()
-  @IsNumber()
-  id: number;
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  readonly id: number;
 }

@@ -4,7 +4,7 @@ import { DrizzleDB } from '@db/types/drizzle';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRegistration } from '@user/domain/entities/UserRegistration';
 import { UserRepository } from '@user/domain/repositories/user.repository';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { CustomLoggerService } from '@shared/application/services/custom-logger.service';
 
 @Injectable()
@@ -57,5 +57,12 @@ export class PostgreSQLUserRepository implements UserRepository {
   async deleteUser(id: number): Promise<any> {
     this.logger.log(`deleteUser(${JSON.stringify({ id })})`);
     return this.db.delete(users).where(eq(users.id, id)).returning();
+  }
+
+  async login(email: string, password: string): Promise<any> {
+    this.logger.log(`login(${JSON.stringify({ email })})`);
+    return this.db.query.users.findFirst({
+      where: and(eq(users.email, email), eq(users.password, password)),
+    });
   }
 }

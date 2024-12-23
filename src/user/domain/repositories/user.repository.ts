@@ -6,4 +6,5 @@ export interface UserRepository {
   find(id: number): Promise<any>;
   findByEmail(email: string): Promise<any>;
   findAll(): Promise<any[]>;
+  login(email: string, password: string): Promise<any>;
 }
