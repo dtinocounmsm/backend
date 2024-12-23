@@ -10,15 +10,22 @@ import { FindUserByIdQueryHandler } from '@user/application/cqrs/queries/find-us
 import { FindUserByIdController } from '@user/interfaces/http/v1/find-user-by-id/find-user-by-id.controller';
 import { DeleteUserController } from '@user/interfaces/http/v1/delete-user/delete-user.controller';
 import { DeleteUserCommandHandler } from '@user/application/cqrs/commands/delete-user.command';
+import { AuthController } from '@user/interfaces/http/v1/auth/auth.controller';
+import { LoginQueryHandler } from '@user/application/cqrs/queries/login.query';
 
 const controllers = [
+  AuthController,
   CreateUserController,
   FindAllUsersController,
   FindUserByIdController,
   DeleteUserController,
 ];
 const commandHandlers = [CreateUserCommandHandler, DeleteUserCommandHandler];
-const queryHandlers = [FindAllUsersQueryHandler, FindUserByIdQueryHandler];
+const queryHandlers = [
+  FindAllUsersQueryHandler,
+  FindUserByIdQueryHandler,
+  LoginQueryHandler,
+];
 
 const application = [...commandHandlers, ...queryHandlers];
 const infrastructure = [PostgreSQLUserRepository];

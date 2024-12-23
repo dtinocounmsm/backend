@@ -6,7 +6,6 @@ import {
   IsDateString,
   IsBoolean,
   IsNumber,
-  IsPhoneNumber,
 } from 'class-validator';
 
 export class CreateUserRequestDto {
@@ -78,7 +77,7 @@ export class CreateUserRequestDto {
     example: '123456789',
     type: String,
   })
-  @IsPhoneNumber()
+  @IsString()
   @IsNotEmpty()
   phone: string;
 

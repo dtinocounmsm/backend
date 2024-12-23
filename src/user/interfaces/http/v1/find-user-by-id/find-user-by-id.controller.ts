@@ -4,6 +4,7 @@ import { FindUserByIdQuery } from '@user/application/cqrs/queries/find-user-by-i
 import { CustomLoggerService } from '@shared/application/services/custom-logger.service';
 import { ApiTags } from '@nestjs/swagger';
 import { FindUserByIdDocsDecorator } from '@user/interfaces/http/v1/find-user-by-id/dto/find-user-by-id-docs.decorator';
+import { FindUserByIdRequestDto } from '@user/interfaces/http/v1/find-user-by-id/dto/find-user-by-id-request.dto';
 
 @ApiTags('Users')
 @Controller({ path: 'users', version: '1' })
@@ -17,7 +18,8 @@ export class FindUserByIdController {
 
   @Get('find')
   @FindUserByIdDocsDecorator()
-  async findById(@Query('id') id: number) {
+  async findById(@Query() filters: FindUserByIdRequestDto) {
+    const { id } = filters;
     this.customLoggerService.log(`findById(${JSON.stringify({ id })})`);
     const query = new FindUserByIdQuery(id);
     const user = await this.queryBus.execute(query);
