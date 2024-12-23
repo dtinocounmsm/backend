@@ -1,0 +1,53 @@
+name: Deploy to AWS Fargate
+
+on:
+  push:
+    branches:
+      - main         # Producción
+      - develop      # Desarrollo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-app .
+          docker tag my-app:latest ${{ secrets.AWS_ECR_REGISTRY }}/my-app:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ secrets.AWS_ECR_REGISTRY }}/my-app:latest
+
+      - name: Set environment context for CDK
+        run: |
+          echo "ENVIRONMENT=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}" >> $GITHUB_ENV
+
+      - name: Deploy to AWS using CDK
+        uses: aws-actions/aws-cdk-action@v2
+        with:
+          cdk-cli-version: '2.x'
+          cdk-args: "deploy --context env=${{ env.ENVIRONMENT }} --require-approval never"
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'  # Cambia la región según sea necesario
