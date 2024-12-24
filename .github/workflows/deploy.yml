@@ -3,15 +3,15 @@ name: Deploy to AWS Fargate
 on:
   push:
     branches:
-      - main         # Producción
-      - develop      # Desarrollo
+      - main # Producción
+      - develop # Desarrollo
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: 'us-east-1'  # Región global, configurada aquí
+      AWS_REGION: 'us-east-1' # Región global, configurada aquí
 
     steps:
       - name: Checkout code
@@ -28,8 +28,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
+      # Paso de Log In a ECR
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Build Docker image
         run: |
@@ -53,12 +58,12 @@ jobs:
         run: |
           npm install  # Asegúrate de que tu proyecto tenga un package.json
 
-      - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS CLI credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}  # Usar la variable global
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy CDK Stack using AWS CLI
         run: |
@@ -66,4 +71,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ env.AWS_REGION }}  # Usar la variable global
+          AWS_REGION: ${{ env.AWS_REGION }} # Usar la variable global
