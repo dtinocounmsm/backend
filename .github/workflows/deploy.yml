@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: 'us-east-1'  # Región global, configurada aquí
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -55,8 +58,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1'
+          aws-region: ${{ env.AWS_REGION }}  # Usar la variable global
 
       - name: Deploy CDK Stack using AWS CLI
         run: |
-          aws cdk deploy --context env=${{ env.ENVIRONMENT }} --require-approval never
+          cdk deploy --context env=${{ env.ENVIRONMENT }} --require-approval never
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}  # Usar la variable global
