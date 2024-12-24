@@ -41,13 +41,22 @@ jobs:
         run: |
           echo "ENVIRONMENT=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}" >> $GITHUB_ENV
 
-      - name: Deploy to AWS using CDK
-        uses: aws-actions/aws-cdk-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          cdk-cli-version: '2.x'
-          cdk-args: "deploy --context env=${{ env.ENVIRONMENT }} --require-approval never"
+          node-version: '14'
 
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1'  # Cambia la región según sea necesario
+      - name: Install dependencies
+        run: |
+          npm install  # Asegúrate de que tu proyecto tenga un package.json
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1'
+
+      - name: Deploy CDK Stack using AWS CLI
+        run: |
+          aws cdk deploy --context env=${{ env.ENVIRONMENT }} --require-approval never
