@@ -1,0 +1,13 @@
+# Exclude node_modules and other unnecessary directories
+node_modules
+npm-debug.log
+
+# Exclude configuration files and unnecessary directories
+Dockerfile
+.dockerignore
+.git
+.github
+.env
+
+# Exclude the infra directory (IaC)
+infra
