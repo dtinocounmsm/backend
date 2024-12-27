@@ -25,26 +25,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 3. Authenticate with Amazon ECR
+      # 3. Bootstrap the CDK environment
+      - name: Bootstrap environment
+        run: cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-east-1
+
+      # 4. Authenticate with Amazon ECR
       - name: Login to Amazon ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
-      # 4. Build the Docker image from the root directory
+      # 5. Build the Docker image from the root directory
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest .
 
-      # 5. Push the image to Amazon ECR
+      # 6. Push the image to Amazon ECR
       - name: Push Docker image to Amazon ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
-      # 6. Install AWS CDK dependencies
+      # 7. Install AWS CDK dependencies
       - name: Install CDK dependencies
         working-directory: ./infra
         run: npm install
 
-      # 7. Deploy the infrastructure using AWS CDK
+      # 8. Deploy the infrastructure using AWS CDK
       - name: Deploy with CDK
         working-directory: ./infra
         env:
