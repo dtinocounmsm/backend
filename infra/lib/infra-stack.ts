@@ -100,12 +100,18 @@ export class InfraStack extends cdk.Stack {
     // Crear un listener para el ALB
     const listener = alb.addListener('Listener', {
       port: 80,
+      open: true,
     });
 
     // Asociar el listener con el servicio ECS
     listener.addTargets('ECS', {
       port: 3000,
+      protocol: elbv2.ApplicationProtocol.HTTP,
       targets: [fargateService],
+      healthCheck: {
+        path: '/',
+        interval: cdk.Duration.seconds(30),
+      },
     });
 
     // Obtener el DNS del ALB para usarlo como URI
