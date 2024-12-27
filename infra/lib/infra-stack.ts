@@ -2,9 +2,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as ecr from 'aws-cdk-lib/aws-ecr'; // Importar el módulo correcto para ECR
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import * as apigatewayv2Integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
-import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -28,9 +28,6 @@ export class InfraStack extends cdk.Stack {
       vpc,
     });
 
-    // Crear un repositorio ECR (si es necesario)
-    const ecrRepo = new ecr.Repository(this, `${props.envName}-EcrRepo`);
-
     // Crear un rol para las tareas de ECS
     const taskRole = new iam.Role(this, `${props.envName}-TaskRole`, {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
@@ -47,10 +44,14 @@ export class InfraStack extends cdk.Stack {
       retention: logs.RetentionDays.ONE_WEEK,
     });
 
-    // Definir la imagen de Docker desde ECR
+    // Definir la imagen de Docker desde ECR existente
     const containerImage = ecs.ContainerImage.fromEcrRepository(
-      ecrRepo,
-      'latest', // Usará la imagen publicada por GitHub Actions
+      ecr.Repository.fromRepositoryName(
+        this,
+        'MyEcrRepository',
+        'medicteciacstack-myapprepositorye55fa29a-yvjgqpf9t9qz',
+      ),
+      'latest', // Usará la imagen publicada más reciente
     );
 
     // Crear una tarea Fargate
