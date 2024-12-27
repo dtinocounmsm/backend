@@ -10,7 +10,7 @@ WORKDIR /app
 # Copy the files needed to install dependencies
 COPY package.json pnpm-lock.yaml ./
 
-# Install all dependencies (development and production)
+# Install ALL dependencies (development and production)
 RUN pnpm install
 
 # Copy the rest of the code to the container
@@ -19,8 +19,8 @@ COPY . .
 # Build the NestJS application
 RUN pnpm build
 
-# Clean up development dependencies and keep only production ones
-RUN pnpm prune --prod
+# Clean up development dependencies and keep only production dependencies
+RUN rm -rf node_modules && pnpm install --prod
 
 # Expose the application port
 EXPOSE 3000
