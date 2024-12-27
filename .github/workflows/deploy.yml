@@ -5,21 +5,20 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: read
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    # Asignar un ambiente (GitHub Actions lo seleccionará automáticamente)
+    environment:
+      name: ${{ github.ref_name == 'main' && 'production' || 'development' }}
 
     steps:
       # 1. Checkout el código
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configurar las credenciales de AWS
+      # 2. Configurar las credenciales de AWS usando el ambiente
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
