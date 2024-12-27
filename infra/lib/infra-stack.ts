@@ -46,7 +46,10 @@ export class InfraStack extends cdk.Stack {
     });
 
     // Definir la imagen de Docker desde ECR o una imagen pública
-    const containerImage = ecs.ContainerImage.fromAsset('../backend');
+    const containerImage = ecs.ContainerImage.fromEcrRepository(
+      ecrRepo,
+      'latest', // Etiqueta utilizada en la publicación de la imagen
+    );
 
     // Crear una tarea Fargate
     const taskDefinition = new ecs.FargateTaskDefinition(
