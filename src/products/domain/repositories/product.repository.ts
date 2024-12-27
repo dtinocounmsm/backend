@@ -5,4 +5,5 @@ export interface ProductRepository {
   findAll(): Promise<any[]>;
   findById(id: number): Promise<any>;
   delete(id: number): Promise<any>;
+  toggleStatus(id: number, status: boolean): Promise<any>;
 }

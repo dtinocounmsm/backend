@@ -1,0 +1,2 @@
+### GET get all customers
+GET http://localhost:3000/v1/customers

@@ -48,4 +48,19 @@ export class PostgreSQLProductRepository implements ProductRepository {
     this.logger.log(`deleteUser(${JSON.stringify({ id })})`);
     return this.db.delete(products).where(eq(products.id, id)).returning();
   }
+
+  async toggleStatus(id: number, status: boolean): Promise<void> {
+    try {
+      await this.db
+        .update(products)
+        .set({ active: status })
+        .where(eq(products.id, id))
+        .execute();
+    } catch (error) {
+      this.logger.error(
+        `toggleStatus(${JSON.stringify({ id, status })}): Error: ${(error as Error).message}`,
+      );
+      throw new Error((error as Error).message);
+    }
+  }
 }

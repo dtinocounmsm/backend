@@ -1,0 +1,27 @@
+### POST create user
+POST http://localhost:3000/v1/users
+Content-Type: application/json
+
+{
+  "name": "Dennis",
+  "firstSurname": "Tinoco",
+  "secondSurname": "Rojas",
+  "email": "djoelplay@gmail.com",
+  "password": "123456",
+  "address": "Avenida Arequipa 123",
+  "countryCode": "+51",
+  "phone": "123456789",
+  "birthdate": "1990-01-01",
+  "gender": "M",
+  "profileId": 1,
+  "active": true
+}
+
+### GET get all users
+GET http://localhost:3000/v1/users
+
+### GET find user by id
+GET http://localhost:3000/v1/users/find?id=43
+
+### DELETE delete user by id
+DELETE http://localhost:3000/v1/users/43
