@@ -1,0 +1,13 @@
+### GET get all products
+GET http://localhost:3000/v1/products
+
+### PATCH toggle product status
+PATCH http://localhost:3000/v1/products/7/toggle-status
+Content-Type: application/json
+
+{
+  "status": false
+}
+
+### DELETE delete product by id
+DELETE http://localhost:3000/v1/products/6
