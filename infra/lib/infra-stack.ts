@@ -49,7 +49,7 @@ export class InfraStack extends cdk.Stack {
       ecr.Repository.fromRepositoryName(
         this,
         'MyEcrRepository',
-        'medicteciacstack-myapprepositorye55fa29a-yvjgqpf9t9qz',
+        'medic-tect-ecr',
       ),
       'latest', // Usará la imagen publicada más reciente
     );
