@@ -1,26 +1,23 @@
 # Use an official Node.js base image
 FROM node:18
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
 # Set the working directory
 WORKDIR /app
 
-# Copy the files needed to install dependencies
-COPY package.json pnpm-lock.yaml ./
+# Copy the necessary files to install dependencies
+COPY package*.json ./
 
 # Install ALL dependencies (development and production)
-RUN pnpm install
+RUN npm install
 
 # Copy the rest of the code to the container
 COPY . .
 
 # Build the NestJS application
-RUN pnpm build
+RUN npm run build
 
-# Clean up development dependencies and keep only production dependencies
-RUN rm -rf node_modules && pnpm install --prod
+# Clean up development dependencies and reinstall only production dependencies
+RUN npm prune --production
 
 # Expose the application port
 EXPOSE 3000
