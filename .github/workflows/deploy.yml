@@ -9,7 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # Assign an environment (GitHub Actions will select it automatically)
     environment:
       name: ${{ github.ref_name == 'main' && 'production' || 'development' }}
 
@@ -18,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configure AWS credentials using the environment
+      # 2. Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -26,29 +25,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # 3. Authenticate with ECR
+      # 3. Authenticate with Amazon ECR
       - name: Login to Amazon ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
       # 4. Build the Docker image from the root directory
       - name: Build Docker image
         run: |
+          echo "Building the Docker image..."
           docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest .
 
-      # 5. Push the image to ECR
+      # 5. Push the image to Amazon ECR
       - name: Push Docker image to Amazon ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
-      # 6. Install CDK dependencies
-      - name: Install dependencies
+      # 6. Install AWS CDK dependencies
+      - name: Install CDK dependencies
         working-directory: ./infra
         run: npm install
 
-      # 7. Deploy the infrastructure using CDK
+      # 7. Deploy the infrastructure using AWS CDK
       - name: Deploy with CDK
         working-directory: ./infra
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
           CDK_DEFAULT_REGION: us-east-1
-        run: npx cdk deploy --require-approval never
+        run: npx cdk deploy --
