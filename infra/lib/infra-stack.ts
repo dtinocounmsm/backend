@@ -1,3 +1,4 @@
+// Importar módulos necesarios del AWS CDK
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
@@ -7,6 +8,7 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
 interface EnvConfig {
   envName: string;
@@ -45,10 +47,10 @@ export class InfraStack extends cdk.Stack {
       retention: logs.RetentionDays.ONE_WEEK,
     });
 
-    // Definir la imagen de Docker desde ECR o una imagen pública
+    // Definir la imagen de Docker desde ECR
     const containerImage = ecs.ContainerImage.fromEcrRepository(
       ecrRepo,
-      'latest', // Etiqueta utilizada en la publicación de la imagen
+      'latest', // Usará la imagen publicada por GitHub Actions
     );
 
     // Crear una tarea Fargate
@@ -89,13 +91,30 @@ export class InfraStack extends cdk.Stack {
       },
     );
 
+    // Crear un Application Load Balancer (ALB)
+    const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
+      vpc,
+      internetFacing: true,
+    });
+
+    // Crear un listener para el ALB
+    const listener = alb.addListener('Listener', {
+      port: 80,
+    });
+
+    // Asociar el listener con el servicio ECS
+    listener.addTargets('ECS', {
+      port: 3000,
+      targets: [fargateService],
+    });
+
+    // Obtener el DNS del ALB para usarlo como URI
+    const albDns = alb.loadBalancerDnsName;
+
     // Crear un API Gateway HTTP API
     const httpApi = new apigatewayv2.HttpApi(this, `${props.envName}-HttpApi`);
 
-    // Obtener la dirección del servicio ECS (usando Public IP o configuración similar)
-    const ecsServiceEndpoint = `http://${fargateService.taskDefinition.defaultContainer?.containerPort}`;
-
-    // Agregar una ruta al API Gateway
+    // Configurar API Gateway con el ALB como endpoint
     httpApi.addRoutes({
       path: '/{proxy+}',
       methods: [
@@ -107,8 +126,8 @@ export class InfraStack extends cdk.Stack {
         apigatewayv2.HttpMethod.OPTIONS,
       ],
       integration: new apigatewayv2Integrations.HttpUrlIntegration(
-        'EcsIntegration',
-        ecsServiceEndpoint,
+        'ALBIntegration',
+        `http://${albDns}`,
       ),
     });
 
