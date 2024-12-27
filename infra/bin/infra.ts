@@ -3,7 +3,7 @@ import * as cdk from 'aws-cdk-lib';
 import { InfraStack } from '../lib/infra-stack';
 
 const app = new cdk.App();
-new InfraStack(app, 'MedicTecStack', {
+new InfraStack(app, 'MedicTecStack01', {
   envName: 'production',
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
