@@ -3,7 +3,6 @@ const path = require('path');
 const marked = require('marked');
 
 // Config
-// Config
 const confluenceUsername = process.env.CONFLUENCE_USER || '';
 const confluenceApiToken = process.env.CONFLUENCE_API_KEY || '';
 const confluenceBaseUrl = process.env.CONFLUENCE_BASE_URL || '';
@@ -63,7 +62,7 @@ async function updatePageContent(pageId, newContent, version) {
     body: JSON.stringify({
       id: pageId,
       type: 'page',
-      title: 'Frontend CHANGELOG', // Puedes mantener el título existente o cambiarlo si lo deseas
+      title: 'Backend - CHANGELOG', // Puedes mantener el título existente o cambiarlo si lo deseas
       body: {
         storage: {
           value: newContent,
