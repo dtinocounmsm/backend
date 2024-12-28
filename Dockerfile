@@ -23,4 +23,4 @@ RUN npm prune --production
 EXPOSE 3000
 
 # Define the command to start the application in production mode
-CMD ["node", "dist/main"]
+CMD ["npm", "run", "start:prod"]

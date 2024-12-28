@@ -73,6 +73,14 @@ export class InfraStack extends cdk.Stack {
           logGroup,
           streamPrefix: `${props.envName}-nestjs`,
         }),
+        environment: {
+          NODE_ENV: 'production',
+          DATABASE_URL: process.env.DATABASE_URL || '',
+          CONFLUENCE_API_KEY: process.env.CONFLUENCE_API_KEY || '',
+          CONFLUENCE_BASE_URL: process.env.CONFLUENCE_BASE_URL || '',
+          CONFLUENCE_PAGE_ID: process.env.CONFLUENCE_PAGE_ID || '',
+          CONFLUENCE_USER: process.env.CONFLUENCE_USER || '',
+        },
       },
     );
 
@@ -110,7 +118,7 @@ export class InfraStack extends cdk.Stack {
       protocol: elbv2.ApplicationProtocol.HTTP,
       targets: [fargateService],
       healthCheck: {
-        path: '/',
+        path: '/healthcheck',
         interval: cdk.Duration.seconds(30),
       },
     });

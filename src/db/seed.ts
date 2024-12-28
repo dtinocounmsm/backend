@@ -2,9 +2,10 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from './schema/schema';
+import { DEFAULT_DATABASE_URL } from '@shared/infrastructure/constants';
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL ?? DEFAULT_DATABASE_URL,
   ssl: true,
 });
 const db = drizzle(pool, {
